@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX DYNAMICS | Elite Fitness & Performance</title>
+    
+    <!-- Google Fonts: Outfit & Syne -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- Babel Standalone for JSX parsing -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- GSAP (GreenSock) for elite animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Inline React Application to prevent CORS blocks on local file:// protocol -->
+    <script type="text/babel">
+      // Register GSAP ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Inline SVG Icon Components for Reliability & Precision Animation
+      const DumbbellIcon = ({ size = 24, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="m6.5 6.5 11 11" /><path d="m21 21-1-1" /><path d="m3 3 1 1" /><path d="m18 22 4-4" /><path d="m2 6 4-4" /><path d="m3 10 7-7" /><path d="m14 21 7-7" /><path d="M6.5 12.5 12.5 6.5" /><path d="m11.5 17.5 6-6" />
+        </svg>
+      );
+
+      const CalendarIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" />
+        </svg>
+      );
+
+      const ClockIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+        </svg>
+      );
+
+      const UserIcon = ({ size = 24, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+        </svg>
+      );
+
+      const MailIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      );
+
+      const PhoneIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        </svg>
+      );
+
+      const MapPinIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
+        </svg>
+      );
+
+      const CheckIcon = ({ size = 18, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      );
+
+      const ActivityIcon = ({ size = 24, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+      );
+
+      const SparklesIcon = ({ size = 24, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+          <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" />
+          <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" />
+        </svg>
+      );
+
+      const ChevronRightIcon = ({ size = 20, ...props }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      );
+
+      /* ==========================================
+         APP COMPONENT
+         ========================================== */
+      function App() {
+        const [scrolled, setScrolled] = React.useState(false);
+        const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
+        // Monitor Scroll for Navbar styling
+        React.useEffect(() => {
+          const handleScroll = () => {
+            if (window.scrollY > 50) {
+              setScrolled(true);
+            } else {
+              setScrolled(false);
+            }
+          };
+          window.addEventListener('scroll', handleScroll);
+          return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
+
+        return (
+          <div>
+            {/* Header / Navigation */}
+            <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+              <div className="nav-container container">
+                <div className="logo" onClick={() => window.scrollTo(0, 0)}>
+                  <span>APEX</span>DYNAMICS
+                </div>
+                <ul className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
+                  <li><a href="#hero" onClick={() => setMobileMenuOpen(false)}>Home</a></li>
+                  <li><a href="#features" onClick={() => setMobileMenuOpen(false)}>Benefits</a></li>
+                  <li><a href="#classes" onClick={() => setMobileMenuOpen(false)}>Classes</a></li>
+                  <li><a href="#bmi" onClick={() => setMobileMenuOpen(false)}>BMI Calc</a></li>
+                  <li><a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Membership</a></li>
+                  <li><a href="#trainers" onClick={() => setMobileMenuOpen(false)}>Coaches</a></li>
+                  <li><a href="#contact" className="glow-btn" style={{ padding: '0.6rem 1.4rem', fontSize: '0.85rem' }} onClick={() => setMobileMenuOpen(false)}>Join Now</a></li>
+                </ul>
+                <button className="menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {mobileMenuOpen ? <path d="M18 6 6 18M6 6l12 12" /> : <path d="M4 12h16M4 6h16M4 18h16" />}
+                  </svg>
+                </button>
+              </div>
+            </nav>
+
+            {/* Hero Section */}
+            <Hero />
+
+            {/* Core Features */}
+            <Features />
+
+            {/* Class Scheduler */}
+            <Classes />
+
+            {/* BMI Calculator */}
+            <BMICalculator />
+
+            {/* Pricing Custom Builder */}
+            <MembershipPricing />
+
+            {/* Coaches Section */}
+            <Trainers />
+
+            {/* Contact Section */}
+            <Contact />
+
+            {/* Footer */}
+            <Footer />
+          </div>
+        );
+      }
+
+      /* ==========================================
+         HERO COMPONENT
+         ========================================== */
+      function Hero() {
+        const heroRef = React.useRef(null);
+
+        React.useEffect(() => {
+          const el = heroRef.current;
+          
+          // Set initial positions
+          gsap.set(el.querySelectorAll('.animate-hero'), { y: 60, opacity: 0 });
+
+          // Timeline for hero entrance
+          const tl = gsap.timeline({ defaults: { ease: 'power4.out', duration: 1.2 } });
+          tl.to(el.querySelectorAll('.animate-hero'), {
+            y: 0,
+            opacity: 1,
+            stagger: 0.15,
+            delay: 0.2
+          });
+        }, []);
+
+        return (
+          <section id="hero" className="hero" ref={heroRef} style={{ backgroundImage: "url('hero_bg.jpg')" }}>
+            <div className="container">
+              <div className="hero-content">
+                <span className="hero-subtitle animate-hero">Forge Your Best Self</span>
+                <h1 className="hero-title animate-hero">
+                  PULSE. STEEL.<br />
+                  <span className="gradient-text">APEX POWER.</span>
+                </h1>
+                <p className="hero-description animate-hero">
+                  An elite athletic space designed for high-performance training, state-of-the-art conditioning, and raw results. Unleash the beast within.
+                </p>
+                <div className="hero-actions animate-hero">
+                  <a href="#pricing" className="glow-btn">Start Training</a>
+                  <a href="#classes" className="sec-btn">Explore Classes</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         FEATURES COMPONENT
+         ========================================== */
+      function Features() {
+        const sectionRef = React.useRef(null);
+
+        React.useEffect(() => {
+          const cards = sectionRef.current.querySelectorAll('.feature-card');
+          
+          gsap.fromTo(cards, 
+            { y: 80, opacity: 0 },
+            { 
+              y: 0, 
+              opacity: 1, 
+              stagger: 0.2, 
+              duration: 1, 
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: 'top 75%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }, []);
+
+        const features = [
+          {
+            icon: <DumbbellIcon size={32} />,
+            title: "Iron Sanctuary",
+            desc: "Premium competition-grade free weights, customized plates, and specialized powerlifting platforms."
+          },
+          {
+            icon: <UserIcon size={32} />,
+            title: "Master Coaches",
+            desc: "Train directly with professional athletes, nutritionists, and biomechanics specialists."
+          },
+          {
+            icon: <SparklesIcon size={32} />,
+            title: "Bio-Recovery",
+            desc: "Advanced recovery suites offering cryotherapy, infrared saunas, and compression treatments."
+          },
+          {
+            icon: <ActivityIcon size={32} />,
+            title: "Hyper-HIIT Studio",
+            desc: "Oxygen-enriched studios with live biometric tracking for elite cardiovascular conditioning."
+          }
+        ];
+
+        return (
+          <section id="features" className="section" ref={sectionRef}>
+            <div className="container">
+              <div className="section-header">
+                <span className="section-tag">Core Value</span>
+                <h2 className="section-title">THE APEX ADVANTAGE</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>We don't offer generic gym routines. We build personalized ecosystems for physical transformation.</p>
+              </div>
+              <div className="features-grid">
+                {features.map((f, idx) => (
+                  <div key={idx} className="feature-card">
+                    <div className="feature-icon">{f.icon}</div>
+                    <h3>{f.title}</h3>
+                    <p>{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         CLASSES COMPONENT
+         ========================================== */
+      function Classes() {
+        const [filter, setFilter] = React.useState('all');
+        const gridRef = React.useRef(null);
+
+        const classesData = [
+          { id: 1, title: "Powerlifting Elite", tag: "strength", trainer: "Marcus Steel", time: "Mon, Wed, Fri | 7:00 AM", img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80" },
+          { id: 2, title: "Metabolic HIIT Pulse", tag: "cardio", trainer: "Aria Vane", time: "Tue, Thu | 8:30 AM", img: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=600&q=80" },
+          { id: 3, title: "Calisthenics Mastery", tag: "strength", trainer: "Marcus Steel", time: "Mon, Fri | 5:30 PM", img: "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=600&q=80" },
+          { id: 4, title: "Vinyasa Flow Breath", tag: "yoga", trainer: "Elena Rostova", time: "Daily | 6:00 AM", img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" },
+          { id: 5, title: "Muay Thai Strike", tag: "combat", trainer: "Alex Mercer", time: "Wed, Sat | 7:00 PM", img: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=600&q=80" },
+          { id: 6, title: "Restorative Meditation", tag: "yoga", trainer: "Elena Rostova", time: "Sunday | 9:00 AM", img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        const filteredClasses = filter === 'all' 
+          ? classesData 
+          : classesData.filter(c => c.tag === filter);
+
+        React.useEffect(() => {
+          // Animating grid items when filter changes
+          const items = gridRef.current.querySelectorAll('.schedule-card');
+          gsap.fromTo(items, 
+            { scale: 0.9, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(1.2)' }
+          );
+        }, [filter]);
+
+        return (
+          <section id="classes" className="section" style={{ background: '#0a0d14' }}>
+            <div className="container">
+              <div className="section-header">
+                <span className="section-tag">Active Schedule</span>
+                <h2 className="section-title">CHOOSE YOUR COMBAT</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>Find your niche and schedule from our highly curated training disciplines.</p>
+              </div>
+
+              {/* Filters */}
+              <div className="schedule-filters">
+                {['all', 'strength', 'cardio', 'yoga', 'combat'].map(tag => (
+                  <button 
+                    key={tag} 
+                    className={`filter-btn ${filter === tag ? 'active' : ''}`}
+                    onClick={() => setFilter(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              {/* Schedule Grid */}
+              <div className="schedule-grid" ref={gridRef}>
+                {filteredClasses.map(item => (
+                  <div key={item.id} className="schedule-card">
+                    <div className="schedule-img-wrapper">
+                      <img src={item.img} alt={item.title} className="schedule-img" />
+                      <span className="schedule-tag">{item.tag}</span>
+                    </div>
+                    <div className="schedule-body">
+                      <div className="schedule-time">
+                        <ClockIcon size={16} />
+                        <span>{item.time}</span>
+                      </div>
+                      <h3 className="schedule-title">{item.title}</h3>
+                      <div className="schedule-trainer">
+                        <UserIcon size={16} style={{ color: 'var(--secondary)' }} />
+                        <span>Coach: <strong>{item.trainer}</strong></span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         BMI CALCULATOR COMPONENT
+         ========================================== */
+      function BMICalculator() {
+        const [height, setHeight] = React.useState(175);
+        const [weight, setWeight] = React.useState(70);
+
+        // Compute BMI
+        const heightM = height / 100;
+        const bmi = (weight / (heightM * heightM)).toFixed(1);
+        const bmiNum = parseFloat(bmi);
+
+        // Determine health category metrics
+        let status = "Healthy Weight";
+        let color = "var(--secondary)"; // cyan
+        let message = "Excellent! You are in the optimal health bracket. Keep training hard.";
+        let percentage = 0.5; // for the gauge circle offset
+
+        if (bmiNum < 18.5) {
+          status = "Underweight";
+          color = "#00B4DB"; // cool blue
+          message = "Time for a strategic bulk. Increase protein synthesis and compound lifts.";
+          percentage = (bmiNum - 10) / (40 - 10);
+        } else if (bmiNum >= 18.5 && bmiNum <= 24.9) {
+          status = "Optimal Fit";
+          color = "#00F2FE"; // neon cyan
+          message = "Peak physical condition. Maintain caloric equilibrium and load progression.";
+          percentage = (bmiNum - 10) / (40 - 10);
+        } else if (bmiNum >= 25 && bmiNum <= 29.9) {
+          status = "Overweight";
+          color = "var(--accent)"; // gold
+          message = "Incorporate calorie deficit. Enhance cardio drills and High-Intensity conditioning.";
+          percentage = (bmiNum - 10) / (40 - 10);
+        } else {
+          status = "Obese Level";
+          color = "var(--primary)"; // neon pink
+          message = "Prioritize endurance and dietary shifts. Apex trainers will guide your journey.";
+          percentage = (bmiNum - 10) / (40 - 10);
+        }
+
+        // Clamping percentage for gauge
+        percentage = Math.max(0, Math.min(1, percentage));
+
+        // Circular gauge config
+        const radius = 90;
+        const circumference = 2 * Math.PI * radius;
+        const strokeDashoffset = circumference - (percentage * circumference);
+
+        return (
+          <section id="bmi" className="section">
+            <div className="container">
+              <div className="section-header">
+                <span className="section-tag">Performance Metric</span>
+                <h2 className="section-title">INTELLIGENT BMI ANALYZER</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>Find your current BMI score and matching conditioning feedback instantly.</p>
+              </div>
+
+              <div className="glass-panel bmi-wrapper">
+                {/* Sliders Form */}
+                <div className="bmi-form">
+                  <div className="slider-group">
+                    <div className="slider-header">
+                      <span>Height</span>
+                      <span>{height} cm</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="120" 
+                      max="220" 
+                      value={height}
+                      onChange={(e) => setHeight(parseInt(e.target.value))}
+                      className="bmi-slider primary-slider" 
+                    />
+                  </div>
+
+                  <div className="slider-group">
+                    <div className="slider-header">
+                      <span>Weight</span>
+                      <span>{weight} kg</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="30" 
+                      max="150" 
+                      value={weight}
+                      onChange={(e) => setWeight(parseInt(e.target.value))}
+                      className="bmi-slider" 
+                    />
+                  </div>
+                </div>
+
+                {/* Real-time Circular Gauge */}
+                <div className="bmi-visualizer">
+                  <div className="gauge-container">
+                    <svg width="220" height="220" style={{ transform: 'rotate(-90deg)' }}>
+                      {/* Background Ring */}
+                      <circle 
+                        cx="110" 
+                        cy="110" 
+                        r={radius} 
+                        fill="transparent" 
+                        stroke="rgba(255, 255, 255, 0.03)" 
+                        strokeWidth="12" 
+                      />
+                      {/* Active Ring with dynamic offset and gradient color */}
+                      <circle 
+                        cx="110" 
+                        cy="110" 
+                        r={radius} 
+                        fill="transparent" 
+                        stroke={color} 
+                        strokeWidth="12" 
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        style={{ transition: 'stroke-dashoffset 0.4s ease-out, stroke 0.4s ease' }}
+                      />
+                    </svg>
+                    <div className="gauge-value" style={{ position: 'absolute' }}>
+                      <span className="gauge-number" style={{ color: color }}>{bmi}</span>
+                      <span className="gauge-lbl">BMI SCORE</span>
+                    </div>
+                  </div>
+
+                  <div className="bmi-status-card" style={{ borderTop: `4px solid ${color}` }}>
+                    <h4 style={{ color: color }}>{status}</h4>
+                    <p>{message}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         MEMBERSHIP CUSTOM PRICE BUILDER
+         ========================================== */
+      function MembershipPricing() {
+        const [duration, setDuration] = React.useState(6); // default 6 months
+        const [addons, setAddons] = React.useState({
+          trainer: true,
+          spa: false,
+          diet: false,
+          locker: false
+        });
+
+        const durationDetails = {
+          1: { name: "Monthly Pass", base: 49 },
+          6: { name: "Semi-Annual Elite", base: 39 },
+          12: { name: "Apex Annual Pass", base: 29 }
+        };
+
+        const addonPrices = {
+          trainer: 40,
+          spa: 15,
+          diet: 25,
+          locker: 5
+        };
+
+        const toggleAddon = (key) => {
+          setAddons(prev => ({ ...prev, [key]: !prev[key] }));
+        };
+
+        // Compute Total Pricing
+        const monthlyBase = durationDetails[duration].base;
+        const monthlyAddons = Object.keys(addons).reduce((sum, key) => {
+          return sum + (addons[key] ? addonPrices[key] : 0);
+        }, 0);
+
+        const totalMonthlyPrice = monthlyBase + monthlyAddons;
+        const termTotal = totalMonthlyPrice * duration;
+
+        return (
+          <section id="pricing" className="section" style={{ background: '#0a0d14' }}>
+            <div className="container">
+              <div className="section-header">
+                <span className="section-tag">Interactive Pricing</span>
+                <h2 className="section-title">BUILD YOUR ACCESS LEVEL</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>Toggle duration options and custom add-ons to build your perfect membership.</p>
+              </div>
+
+              <div className="pricing-builder">
+                {/* Builder Controls */}
+                <div className="builder-controls">
+                  {/* Duration Selector */}
+                  <div className="duration-selector">
+                    {[1, 6, 12].map(months => (
+                      <div 
+                        key={months}
+                        className={`duration-opt ${duration === months ? 'active' : ''}`}
+                        onClick={() => setDuration(months)}
+                      >
+                        {months} {months === 1 ? 'Month' : 'Months'}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Addons Checklist */}
+                  <div className="addons-list">
+                    <div 
+                      className={`addon-item ${addons.trainer ? 'selected' : ''}`}
+                      onClick={() => toggleAddon('trainer')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className="addon-checkbox">
+                          {addons.trainer && <CheckIcon size={14} />}
+                        </div>
+                        <div className="addon-info">
+                          <span className="addon-title">Personal Coach Guidance</span>
+                          <span className="addon-desc">Weekly one-on-one sessions and biometric scans.</span>
+                        </div>
+                      </div>
+                      <span className="addon-price">+${addonPrices.trainer}/mo</span>
+                    </div>
+
+                    <div 
+                      className={`addon-item ${addons.spa ? 'selected' : ''}`}
+                      onClick={() => toggleAddon('spa')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className="addon-checkbox">
+                          {addons.spa && <CheckIcon size={14} />}
+                        </div>
+                        <div className="addon-info">
+                          <span className="addon-title">Bio-Recovery Suite Access</span>
+                          <span className="addon-desc">Infrared saunas, ice-baths, and recovery pods.</span>
+                        </div>
+                      </div>
+                      <span className="addon-price">+${addonPrices.spa}/mo</span>
+                    </div>
+
+                    <div 
+                      className={`addon-item ${addons.diet ? 'selected' : ''}`}
+                      onClick={() => toggleAddon('diet')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className="addon-checkbox">
+                          {addons.diet && <CheckIcon size={14} />}
+                        </div>
+                        <div className="addon-info">
+                          <span className="addon-title">Pro-Diet Meal Kit Plans</span>
+                          <span className="addon-desc">Daily macro-calculated protein smoothies and snacks.</span>
+                        </div>
+                      </div>
+                      <span className="addon-price">+${addonPrices.diet}/mo</span>
+                    </div>
+
+                    <div 
+                      className={`addon-item ${addons.locker ? 'selected' : ''}`}
+                      onClick={() => toggleAddon('locker')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div className="addon-checkbox">
+                          {addons.locker && <CheckIcon size={14} />}
+                        </div>
+                        <div className="addon-info">
+                          <span className="addon-title">Premium Locker & Towels</span>
+                          <span className="addon-desc">Keyless smart locker and clean towels on every visit.</span>
+                        </div>
+                      </div>
+                      <span className="addon-price">+${addonPrices.locker}/mo</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing Visualizer Card */}
+                <div className="glass-panel price-summary-panel" style={{ borderTop: '5px solid var(--primary)' }}>
+                  <span className="summary-title">{durationDetails[duration].name}</span>
+                  <div className="total-price-display">
+                    <span className="price-currency">$</span>
+                    <span className="price-amount">{totalMonthlyPrice}</span>
+                    <span className="price-period">Per Month</span>
+                  </div>
+                  
+                  <ul className="summary-bullets">
+                    <li><CheckIcon size={16} /> Elite strength area access</li>
+                    <li><CheckIcon size={16} /> Open training calendar</li>
+                    {addons.trainer && <li><CheckIcon size={16} /> Personal trainer program active</li>}
+                    {addons.spa && <li><CheckIcon size={16} /> Recovery suite access active</li>}
+                    {addons.diet && <li><CheckIcon size={16} /> Daily macronutrient shakes active</li>}
+                    {addons.locker && <li><CheckIcon size={16} /> Premium locker active</li>}
+                  </ul>
+
+                  <div style={{ borderTop: '1px solid var(--border-color)', width: '100%', margin: '1.5rem 0', paddingTop: '1.5rem' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                      Billed as <strong>${termTotal}</strong> total contract for {duration} {duration === 1 ? 'month' : 'months'}.
+                    </p>
+                    <a href="#contact" className="glow-btn" style={{ display: 'block', textDecoration: 'none', textAlign: 'center' }}>
+                      Lock In Membership
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         TRAINERS COMPONENT
+         ========================================== */
+      /* Note: Trainer profiles load local generated assets */
+      function Trainers() {
+        const sectionRef = React.useRef(null);
+
+        React.useEffect(() => {
+          const cards = sectionRef.current.querySelectorAll('.trainer-card');
+          
+          gsap.fromTo(cards,
+            { y: 85, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              stagger: 0.25,
+              duration: 1,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: 'top 75%',
+                toggleActions: 'play none none none'
+              }
+            }
+          );
+        }, []);
+
+        const coaches = [
+          { name: "Marcus Steel", role: "Strength & Powerlifting Coach", img: "trainer_strength.jpg" },
+          { name: "Aria Vane", role: "HIIT & Cardio Director", img: "trainer_cardio.jpg" },
+          { name: "Elena Rostova", role: "Yoga & Biomechanics Coach", img: "trainer_yoga.jpg" }
+        ];
+
+        return (
+          <section id="trainers" className="section" ref={sectionRef}>
+            <div className="container">
+              <div className="section-header">
+                <span className="section-tag">Elite Staff</span>
+                <h2 className="section-title">APEX MASTER COACHES</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>Dedicated guidance from experts who have trained elite and competition athletes.</p>
+              </div>
+
+              <div className="trainers-grid">
+                {coaches.map((c, idx) => (
+                  <div key={idx} className="trainer-card">
+                    <img src={c.img} alt={c.name} className="trainer-card-img" />
+                    <div className="trainer-overlay">
+                      <span className="trainer-role">{c.role}</span>
+                      <h3 className="trainer-name">{c.name}</h3>
+                      <div className="trainer-socials">
+                        <a href="#" className="trainer-social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                        <a href="#" className="trainer-social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                        <a href="#" className="trainer-social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         CONTACT COMPONENT
+         ========================================== */
+      function Contact() {
+        const [formData, setFormData] = React.useState({ name: '', email: '', phone: '', goal: 'muscle' });
+        const [submitted, setSubmitted] = React.useState(false);
+        const [error, setError] = React.useState('');
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (!formData.name.trim() || !formData.email.trim()) {
+            setError('Please fill in required fields (Name and Email).');
+            return;
+          }
+          
+          // Basic email regex
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(formData.email)) {
+            setError('Please enter a valid email address.');
+            return;
+          }
+
+          setError('');
+          setSubmitted(true);
+        };
+
+        return (
+          <section id="contact" className="section">
+            <div className="container">
+              <div className="contact-wrapper">
+                {/* Details */}
+                <div className="contact-info">
+                  <div>
+                    <span className="section-tag" style={{ display: 'inline-block', marginBottom: '1rem' }}>Get In Touch</span>
+                    <h2 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>READY TO BEGIN YOUR ASCENT?</h2>
+                    <p style={{ color: 'var(--text-secondary)' }}>Leave your details and a transformation strategist will reach out to build your roadmap within 24 hours.</p>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <div className="contact-method">
+                      <div className="contact-method-icon"><MapPinIcon /></div>
+                      <div>
+                        <h4>Headquarters</h4>
+                        <p>742 Cybernetic Boulevard, Suite 100, Sector 4</p>
+                      </div>
+                    </div>
+                    <div className="contact-method">
+                      <div className="contact-method-icon"><PhoneIcon /></div>
+                      <div>
+                        <h4>Direct Hotline</h4>
+                        <p>+1 (800) 555-APEX / (555) 0199</p>
+                      </div>
+                    </div>
+                    <div className="contact-method">
+                      <div className="contact-method-icon"><MailIcon /></div>
+                      <div>
+                        <h4>Digital Support</h4>
+                        <p>recruitment@apexdynamics.fit</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form / Success Glass Panel */}
+                <div className="glass-panel" style={{ minHeight: '400px' }}>
+                  {submitted ? (
+                    <div className="submit-success">
+                      <div className="success-icon">
+                        <CheckIcon size={40} />
+                      </div>
+                      <h3 className="section-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>Roadmap Reserved!</h3>
+                      <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', marginBottom: '2rem' }}>
+                        Thank you, <strong>{formData.name}</strong>. An Apex specialist has locked in your details. Watch your inbox at <strong>{formData.email}</strong>.
+                      </p>
+                      <button className="sec-btn" onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', goal: 'muscle' }); }}>
+                        Submit New Inquiry
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit}>
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.8rem', textTransform: 'uppercase', marginBottom: '2.5rem' }}>Transformation Portal</h3>
+                      
+                      {error && <div style={{ color: 'var(--primary)', marginBottom: '1.5rem', fontWeight: 600, fontSize: '0.9rem' }}>{error}</div>}
+
+                      <div className="form-group">
+                        <input 
+                          type="text" 
+                          id="name" 
+                          placeholder=" " 
+                          className="form-input" 
+                          value={formData.name}
+                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        />
+                        <label htmlFor="name" className="form-label">Full Name *</label>
+                      </div>
+
+                      <div className="form-group">
+                        <input 
+                          type="email" 
+                          id="email" 
+                          placeholder=" " 
+                          className="form-input"
+                          value={formData.email}
+                          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        />
+                        <label htmlFor="email" className="form-label">Email Address *</label>
+                      </div>
+
+                      <div className="form-group">
+                        <input 
+                          type="tel" 
+                          id="phone" 
+                          placeholder=" " 
+                          className="form-input"
+                          value={formData.phone}
+                          onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                        />
+                        <label htmlFor="phone" className="form-label">Phone Number</label>
+                      </div>
+
+                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        <label style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600, textTransform: 'uppercase' }}>Primary Fitness Goal</label>
+                        <select 
+                          className="form-input"
+                          style={{ background: 'var(--bg-base)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '0.8rem' }}
+                          value={formData.goal}
+                          onChange={(e) => setFormData(prev => ({ ...prev, goal: e.target.value }))}
+                        >
+                          <option value="muscle" style={{ background: 'var(--bg-base)' }}>Hypertrophy & Strength</option>
+                          <option value="weight" style={{ background: 'var(--bg-base)' }}>Fat Loss & Shredding</option>
+                          <option value="mobility" style={{ background: 'var(--bg-base)' }}>Yoga, Flexibility & Core</option>
+                          <option value="combat" style={{ background: 'var(--bg-base)' }}>Boxing / MMA Conditioning</option>
+                        </select>
+                      </div>
+
+                      <button type="submit" className="glow-btn" style={{ width: '100%', marginTop: '1rem' }}>
+                        Request Free Pass
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ==========================================
+         FOOTER COMPONENT
+         ========================================== */
+      function Footer() {
+        return (
+          <footer className="footer">
+            <div className="container">
+              <div className="footer-top">
+                <div className="footer-brand">
+                  <div className="logo" style={{ marginBottom: '1rem' }}>
+                    <span>APEX</span>DYNAMICS
+                  </div>
+                  <p>An elite, futuristic sanctuary crafted for physical dominance, cardiovascular durability, and rapid structural recovery.</p>
+                  <div className="social-links">
+                    <a href="#" className="social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                    <a href="#" className="social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    <a href="#" className="social-link"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+                  </div>
+                </div>
+                <div className="footer-column">
+                  <h4>Quick Links</h4>
+                  <ul className="footer-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#features">Benefits</a></li>
+                    <li><a href="#classes">Classes</a></li>
+                    <li><a href="#bmi">BMI Calc</a></li>
+                  </ul>
+                </div>
+                <div className="footer-column">
+                  <h4>Disciplines</h4>
+                  <ul className="footer-links">
+                    <li><a href="#classes">Powerlifting</a></li>
+                    <li><a href="#classes">Metabolic HIIT</a></li>
+                    <li><a href="#classes">Combat Strikes</a></li>
+                    <li><a href="#classes">Yoga Mobility</a></li>
+                  </ul>
+                </div>
+                <div className="footer-column">
+                  <h4>Safety & Laws</h4>
+                  <ul className="footer-links">
+                    <li><a href="#">Privacy Agreement</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Liability Waiver</a></li>
+                    <li><a href="#">Guest Policy</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div className="footer-bottom">
+                <span>&copy; {new Date().getFullYear()} APEX DYNAMICS. All rights reserved.</span>
+                <span>Crafted by ANTIGRAVITY</span>
+              </div>
+            </div>
+          </footer>
+        );
+      }
+
+      // Render React App
+      const rootElement = document.getElementById('root');
+      if (rootElement) {
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+      }
+    </script>
+</body>
+</html>
